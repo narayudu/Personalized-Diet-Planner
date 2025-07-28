@@ -1,0 +1,43 @@
+name: Deploy Backend to Heroku
+ 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+ 
+jobs:
+  deploy:
+    name: Build and Deploy Backend
+    runs-on: ubuntu-latest
+ 
+    defaults:
+      run:
+        working-directory: backend
+ 
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+ 
+      - name: Install Dependencies
+        run: npm install
+ 
+      # Optional: Add test step here
+      # - name: Run Tests
+      #   run: npm test
+ 
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          procfile: "Procfile"
+        env:
+          NODE_ENV: production
